@@ -129,6 +129,7 @@ class Array_enumerator
     begin
       @mutex.synchronize do
         while ele = @enum.next
+          @empty = false
           @length_cache += 1
           yield(ele)
         end
@@ -162,6 +163,7 @@ class Array_enumerator
     begin
       @mutex.synchronize do
         while ele = @enum.next
+          @empty = false
           @length_cache += 1
           @eles << ele
         end
