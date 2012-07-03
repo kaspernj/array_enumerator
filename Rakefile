@@ -17,8 +17,8 @@ Jeweler::Tasks.new do |gem|
   gem.name = "array_enumerator"
   gem.homepage = "http://github.com/kaspernj/array_enumerator"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Enumerator abstraction layer that emulates certain array functionality (methods).}
+  gem.description = %Q{Enumerator abstraction layer that emulates certain array functionality (methods like empty?, slice, shift and more) by using a small cache and other tricks without loading all the data from the enumerator at the same time.}
   gem.email = "k@spernj.org"
   gem.authors = ["Kasper Johansen"]
   # dependencies defined in Gemfile

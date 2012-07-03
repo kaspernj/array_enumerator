@@ -95,6 +95,8 @@ class Array_enumerator
   
   #Caches necessary needed elements and then returns the result as on a normal array.
   def shift(*args)
+    check_corrupted
+    
     if args[0]
       amount = args[0]
     else

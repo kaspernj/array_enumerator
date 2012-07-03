@@ -81,13 +81,19 @@ describe "ArrayEnumerator" do
     cont = %w[a b c d e].to_enum
     ae = Array_enumerator.new(cont)
     
+    begin
+      ae.length
+      raise "Should have failed but didnt."
+    rescue
+      #ignore.
+    end
+    
+    ae.each do |ele|
+      #ignore.
+    end
+    
     res = ae.length
     raise "Expected length to be 5 but it wasnt: '#{res}'." if res != 5
-    
-    ae.shift
-    
-    res = ae.length
-    raise "Expected length to be 4 but it wasnt: '#{res}'." if res != 4
   end
   
   it "slice" do
@@ -98,7 +104,10 @@ describe "ArrayEnumerator" do
     runs = [
       [6],
       [1, 2],
-      [1..3],
+      [1..3]
+    ]
+    
+    fails = [
       [-2, 2],
       [2, -2]
     ]
@@ -108,6 +117,15 @@ describe "ArrayEnumerator" do
       res2 = ae.slice(*args)
       
       raise "Expected res to be: #{res1} but got #{res2} for args '#{args}'." if res1 != res2
+    end
+    
+    fails.each do |args|
+      begin
+        res2 = ae.slice(*args)
+        raise "Should have failed but didnt."
+      rescue
+        #ignore.
+      end
     end
   end
 end
