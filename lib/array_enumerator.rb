@@ -24,7 +24,16 @@ class Array_enumerator
   
   #Returns true if the array is empty.
   def empty?
-    cache_ele if @eles == nil
+    if @empty == nil
+      cache_ele if !@eles
+      
+      if @length_cache > 0
+        @empty = false
+      else
+        @empty = true
+      end
+    end
+    
     return @empty
   end
   
@@ -43,7 +52,7 @@ class Array_enumerator
     check_corrupted
     @array_corrupted = true
     
-    enum = Enumerator.new do |yielder|
+    return Enumerator.new do |yielder|
       if @eles
         while ele = @eles.shift
           yielder << ele
@@ -56,9 +65,9 @@ class Array_enumerator
     end
   end
   
-  #Forcing all elements to be cached and crush the memory for big results.
+  #Returns the counted length. Can only be called after the end of the enumerator has been reached.
   def length
-    cache_all
+    raise "Cant call length before the end has been reached." if !@end
     return @length_cache
   end
   
@@ -73,7 +82,7 @@ class Array_enumerator
     elsif args[0] and args[1] and args[0] > 0 and args[1] > 0
       need_eles = args[0] + args[1]
     elsif args[0] < 0 or args[1] < 0
-      cache_all
+      raise "Slice cant take negative arguments."
     else
       raise "Dont now what to do with args: '#{args}'."
     end
@@ -129,13 +138,12 @@ class Array_enumerator
     begin
       @mutex.synchronize do
         while ele = @enum.next
-          @empty = false
           @length_cache += 1
           yield(ele)
         end
       end
     rescue StopIteration
-      #ignore.
+      @end = true
     end
   end
   
@@ -148,11 +156,10 @@ class Array_enumerator
         while @eles.length <= amount
           @eles << @enum.next
           @length_cache += 1
-          @empty = false
         end
       end
     rescue StopIteration
-      #ignore.
+      @end = true
     end
   end
   
@@ -163,13 +170,12 @@ class Array_enumerator
     begin
       @mutex.synchronize do
         while ele = @enum.next
-          @empty = false
           @length_cache += 1
           @eles << ele
         end
       end
     rescue StopIteration
-      #ignore.
+      @end = true
     end
   end
 end
