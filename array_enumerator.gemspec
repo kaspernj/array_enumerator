@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Kasper Johansen"]
   s.date = %q{2012-07-03}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{Enumerator abstraction layer that emulates certain array functionality (methods like empty?, slice, shift and more) by using a small cache and other tricks without loading all the data from the enumerator at the same time.}
   s.email = %q{k@spernj.org}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "array_enumerator.gemspec",
     "lib/array_enumerator.rb",
     "spec/array_enumerator_spec.rb",
     "spec/spec_helper.rb"
@@ -33,7 +34,7 @@ Gem::Specification.new do |s|
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{Enumerator abstraction layer that emulates certain array functionality (methods).}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
