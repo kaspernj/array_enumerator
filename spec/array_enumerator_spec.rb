@@ -128,4 +128,17 @@ describe "ArrayEnumerator" do
       end
     end
   end
+  
+  it "each_index" do
+    arr = %w[a b c d e f g]
+    ae = Array_enumerator.new(arr.to_enum)
+    
+    expect = 0
+    ae.each_index do |num|
+      raise "Expected #{expect} but got: #{num}" if num != expect
+      ele = ae[num]
+      raise "Expected #{arr[num]} but got: #{ele}" if ele != arr[num]
+      expect += 1
+    end
+  end
 end
