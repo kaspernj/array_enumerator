@@ -47,6 +47,49 @@ class Array_enumerator
     end
   end
   
+  #This method should only be used with 'each_index'.
+  def [](key)
+    if @each_index and @each_index.key?(key)
+      ret = @each_index[key]
+      @each_index.delete(key)
+      return ret
+    end
+    
+    raise "This only works when also using 'each_index'. Invalid key: '#{key}'."
+  end
+  
+  #Yields each count-key and caches element for returning it by using the []-method.
+  def each_index(&block)
+    enum = Enumerator.new do |yielder|
+      begin
+        @each_index = {}
+        
+        count = 0
+        self.each do |ele|
+          #Remove previous element to not take up memory.
+          count_before = count - 1
+          @each_index.delete(count_before) if @each_index.key?(count_before)
+          
+          #Add current element to cache.
+          @each_index[count] = ele
+          yield(count)
+          
+          #Increase count for next run.
+          count += 1
+        end
+      ensure
+        @each_index = nil
+      end
+    end
+    
+    if block
+      enum.each(&block)
+      return nil
+    else
+      return enum
+    end
+  end
+  
   #Returns a enumerator that can yield the all the lements (both cached and future un-cached ones).
   def to_enum
     check_corrupted
