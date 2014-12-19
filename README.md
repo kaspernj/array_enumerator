@@ -1,3 +1,7 @@
+[![Build Status](https://api.shippable.com/projects/540e7b993479c5ea8f9ec1fb/badge?branchName=master)](https://app.shippable.com/projects/540e7b993479c5ea8f9ec1fb/builds/latest)
+[![Code Climate](https://codeclimate.com/github/kaspernj/array_enumerator/badges/gpa.svg)](https://codeclimate.com/github/kaspernj/array_enumerator)
+[![Test Coverage](https://codeclimate.com/github/kaspernj/array_enumerator/badges/coverage.svg)](https://codeclimate.com/github/kaspernj/array_enumerator)
+
 # ArrayEnumerator
 
 A modified enumerator for Ruby that behaves like an array, without loading everything into memory.
