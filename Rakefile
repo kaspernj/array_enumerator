@@ -14,8 +14,8 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
-  gem.name = "array_enumerator"
-  gem.homepage = "http://github.com/kaspernj/array_enumerator"
+  gem.name = "ArrayEnumerator"
+  gem.homepage = "http://github.com/kaspernj/ArrayEnumerator"
   gem.license = "MIT"
   gem.summary = %Q{Enumerator abstraction layer that emulates certain array functionality (methods).}
   gem.description = %Q{Enumerator abstraction layer that emulates certain array functionality (methods like empty?, slice, shift and more) by using a small cache and other tricks without loading all the data from the enumerator at the same time.}
@@ -43,7 +43,7 @@ Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "array_enumerator #{version}"
+  rdoc.title = "ArrayEnumerator #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
