@@ -4,7 +4,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{array_enumerator}
+  s.name = %q{ArrayEnumerator}
   s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.email = %q{k@spernj.org}
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
@@ -22,15 +22,15 @@ Gem::Specification.new do |s|
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
+    "README.md",
     "Rakefile",
     "VERSION",
-    "array_enumerator.gemspec",
-    "lib/array_enumerator.rb",
-    "spec/array_enumerator_spec.rb",
+    "ArrayEnumerator.gemspec",
+    "lib/ArrayEnumerator.rb",
+    "spec/ArrayEnumerator_spec.rb",
     "spec/spec_helper.rb"
   ]
-  s.homepage = %q{http://github.com/kaspernj/array_enumerator}
+  s.homepage = %q{http://github.com/kaspernj/ArrayEnumerator}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
