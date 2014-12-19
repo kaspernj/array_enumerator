@@ -1,9 +1,20 @@
 #This class is ment as an enumerator but with a cache that enables it to emulate array-functionality (first, empty and so on). If elements goes out of memory, then the array becomes corrupted and methods like 'first' and 'slice' will no longer work (raise errors).
 class ArrayEnumerator
+  class ArrayCorruptedError < RuntimeError; end
+  class CannotCallBeforeEnd < RuntimeError; end
+
   #Takes an enumerator to work with as argument.
-  def initialize(enum)
-    #The enumerator being used.
-    @enum = enum
+  def initialize(enum = nil, &blk)
+    if enum
+      #The enumerator being used.
+      @enum = enum
+    elsif blk
+      @enum = Enumerator.new do |yielder|
+        blk.call(yielder)
+      end
+    else
+      raise "No enum or block was given."
+    end
 
     #Used to calculate length without depending corruption.
     @length_cache = 0
@@ -18,7 +29,7 @@ class ArrayEnumerator
   #Cache the first elements (if not cached already) and returns it.
   def first
     check_corrupted
-    cache_ele if !@eles or @eles.empty?
+    cache_ele if !@eles || @eles.empty?
     return @eles.first
   end
 
@@ -49,7 +60,7 @@ class ArrayEnumerator
 
   #This method should only be used with 'each_index'.
   def [](key)
-    if @each_index and @each_index.key?(key)
+    if @each_index && @each_index.key?(key)
       ret = @each_index[key]
       @each_index.delete(key)
       return ret
@@ -110,7 +121,7 @@ class ArrayEnumerator
 
   #Returns the counted length. Can only be called after the end of the enumerator has been reached.
   def length
-    raise "Cant call length before the end has been reached." if !@end
+    raise CannotCallBeforeEnd, "Cant call length before the end has been reached." unless @end
     return @length_cache
   end
 
@@ -118,13 +129,13 @@ class ArrayEnumerator
   def slice(*args)
     check_corrupted
 
-    if args[0].is_a?(Range) and !args[1]
+    if args[0].is_a?(Range) && !args[1]
       need_eles = args[0].begin + args[0].end
-    elsif args[0] and !args[1]
+    elsif args[0] && !args[1]
       need_eles = args[0]
-    elsif args[0] and args[1] and args[0] > 0 and args[1] > 0
+    elsif args[0] && args[1] && args[0] > 0 && args[1] > 0
       need_eles = args[0] + args[1]
-    elsif args[0] < 0 or args[1] < 0
+    elsif args[0] < 0 || args[1] < 0
       raise "Slice cant take negative arguments."
     else
       raise "Dont now what to do with args: '#{args}'."
@@ -132,7 +143,7 @@ class ArrayEnumerator
 
     @eles = [] if !@eles
     cache_eles = need_eles - @eles.length if need_eles
-    cache_ele(cache_eles) if need_eles and cache_eles > 0
+    cache_ele(cache_eles) if need_eles && cache_eles > 0
     return @eles.slice(*args)
   end
 
@@ -146,8 +157,8 @@ class ArrayEnumerator
       amount = 1
     end
 
-    @eles = [] if !@eles
-    cache_ele(amount - @eles.length) if !@eles or @eles.length < amount
+    @eles = [] unless @eles
+    cache_ele(amount - @eles.length) if !@eles || @eles.length < amount
     res = @eles.shift(*args)
 
     #Since we are removing an element, the length should go down with the amount of elements captured.
@@ -169,11 +180,11 @@ class ArrayEnumerator
 
   alias to_ary to_a
 
-  private
+private
 
   #Raises error because elements have been forgotten to spare memory.
   def check_corrupted
-    raise "Too late to call. Corrupted." if @array_corrupted
+    raise ArrayCorruptedError, "Too late to call. Corrupted." if @array_corrupted
   end
 
   #Yields the rest of the elements to the given block.

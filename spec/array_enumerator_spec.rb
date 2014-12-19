@@ -1,96 +1,87 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require "spec_helper"
 
 describe "ArrayEnumerator" do
-  it "shift" do
+  it "can be initialized as normal enumerator" do
+    enum = ArrayEnumerator.new do |y|
+      3.times do |count|
+        y << count
+      end
+    end
+
+    3.times do |count|
+      enum.shift.should eq count
+    end
+  end
+
+  it "#shift" do
     cont = %w[a b c d e].to_enum
     ae = ArrayEnumerator.new(cont)
     ae.shift.should eq "a"
     ae.to_a.should eq %w[b c d e]
   end
 
-  it "each" do
-    arr = %w[a b c]
-    cont = arr.to_enum
-    ae = ArrayEnumerator.new(cont)
+  describe "#each" do
+    it "should loop with correct values" do
+      arr = %w[a b c]
+      cont = arr.to_enum
+      ae = ArrayEnumerator.new(cont)
 
-    count = 0
-    ae.each do |ele|
-      ele.should eq arr[count]
-      count += 1
-    end
-
-    count.should eq 3
-
-    arr = %w[a b c]
-    cont = arr.to_enum
-    ae = ArrayEnumerator.new(cont)
-
-    ae.empty?.should eq false
-
-    count = 0
-    ae.each do |ele|
-      ele.should eq arr[count]
-      count += 1
-    end
-
-    count.should eq 3
-
-    begin
-      ae.to_a
-      raise "Should have raised exception but didnt."
-    rescue
-      #ignore.
-    end
-
-    begin
-      ae.first
-      raise "Should have raised exception but didnt."
-    rescue
-      #ignore.
-    end
-
-    begin
+      count = 0
       ae.each do |ele|
-        raise "Should get here?"
+        ele.should eq arr[count]
+        count += 1
       end
 
-      raise "Should get here?"
-    rescue
-      #ignore.
+      count.should eq 3
     end
   end
 
-  it "empty" do
-    cont = %w[a b c].to_enum
-    ae = ArrayEnumerator.new(cont)
+  describe "#empty?" do
+    it "be able to test empty and then loop correctly afterwards" do
+      arr = %w[a b c]
+      cont = arr.to_enum
+      ae = ArrayEnumerator.new(cont)
 
-    res = ae.empty?
-    raise "Expected empty to be false but got: '#{res}'." if res != false
+      ae.empty?.should eq false
 
-    first = ae.first
-    raise "Expected first to be 'a' but it wasnt: '#{first}'." if first != "a"
+      count = 0
+      ae.each do |ele|
+        ele.should eq arr[count]
+        count += 1
+      end
+
+      count.should eq 3
+
+      expect { ae.to_a }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+      expect { ae.first }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+
+      expect {
+        ae.each { |ele| raise "Should never get here?" }
+      }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+    end
+
+    it "still be able to get the first element after testing if empty" do
+      cont = %w[a b c].to_enum
+      ae = ArrayEnumerator.new(cont)
+      ae.empty?.should eq false
+      ae.first.should eq "a"
+    end
   end
 
-  it "length" do
+  it "#length" do
     cont = %w[a b c d e].to_enum
     ae = ArrayEnumerator.new(cont)
 
-    begin
-      ae.length
-      raise "Should have failed but didnt."
-    rescue
-      #ignore.
-    end
+    expect { ae.length }.to raise_error(ArrayEnumerator::CannotCallBeforeEnd)
 
     ae.each do |ele|
-      #ignore.
+      # ignore.
     end
 
-    res = ae.length
-    raise "Expected length to be 5 but it wasnt: '#{res}'." if res != 5
+    ae.length.should eq 5
   end
 
-  it "slice" do
+  it "#slice" do
     arr = %w[a b c d e f g h i j k l m n]
     cont = arr.to_enum
     ae = ArrayEnumerator.new(cont)
@@ -107,31 +98,25 @@ describe "ArrayEnumerator" do
     ]
 
     runs.each do |args|
-      res1 = arr.slice(*args)
-      res2 = ae.slice(*args)
-
-      raise "Expected res to be: #{res1} but got #{res2} for args '#{args}'." if res1 != res2
+      arr.slice(*args).should eq ae.slice(*args)
     end
 
     fails.each do |args|
-      begin
+      expect {
         res2 = ae.slice(*args)
         raise "Should have failed but didnt."
-      rescue
-        #ignore.
-      end
+      }.to raise_error
     end
   end
 
-  it "each_index" do
+  it "#each_index" do
     arr = %w[a b c d e f g]
     ae = ArrayEnumerator.new(arr.to_enum)
 
     expect = 0
     ae.each_index do |num|
-      raise "Expected #{expect} but got: #{num}" if num != expect
-      ele = ae[num]
-      raise "Expected #{arr[num]} but got: #{ele}" if ele != arr[num]
+      num.should eq expect
+      ae[num].should eq arr[num]
       expect += 1
     end
   end
