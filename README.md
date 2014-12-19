@@ -29,7 +29,7 @@ Call array-methods like you normally would:
 a_enum.empty? #=> false
 a_enum.first #=> 1
 a_enum.shift #=> 2
-a_enum[2] => 3
+a_enum[2] #=> 3
 a_enum.each_index { |count| puts "Count: #{count}" }
 a_enum.length #=> 3
 ```
