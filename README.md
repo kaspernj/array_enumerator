@@ -6,7 +6,7 @@ A modified enumerator for Ruby that behaves like an array, without loading every
 
 Add to your Gemfile and bundle:
 ```ruby
-gem "ArrayEnumerator"
+gem "array_enumerator"
 ```
 
 ## Usage
