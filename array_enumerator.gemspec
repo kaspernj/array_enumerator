@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
     "spec/ArrayEnumerator_spec.rb",
     "spec/spec_helper.rb"
   ]
-  s.homepage = %q{http://github.com/kaspernj/ArrayEnumerator}
+  s.homepage = %q{http://github.com/kaspernj/array_enumerator}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
