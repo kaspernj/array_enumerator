@@ -120,4 +120,15 @@ describe "ArrayEnumerator" do
       expect += 1
     end
   end
+
+  it "#select" do
+    enum = ArrayEnumerator.new do |y|
+      10.times do |count|
+        y << count
+      end
+    end
+
+    result = enum.select { |element| element == 5}
+    result.should eq [5]
+  end
 end

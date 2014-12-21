@@ -125,6 +125,17 @@ class ArrayEnumerator
     return @length_cache
   end
 
+  def select
+    result = []
+
+    check_corrupted
+    self.each do |element|
+      result << element if yield(element)
+    end
+
+    return result
+  end
+
   # Giving slice negaive arguments will force it to cache all elements and crush the memory for big results.
   def slice(*args)
     check_corrupted
