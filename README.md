@@ -24,6 +24,15 @@ a_enum = ArrayEnumerator.new do |y|
 end
 ```
 
+Or give it a normal Enumerator that already exists:
+```ruby
+enum = Enumerator.new do |y|
+  # do something
+end
+
+a_enum = ArrayEnumerator.new(enum)
+```
+
 Call array-methods like you normally would:
 ```ruby
 a_enum.empty? #=> false
