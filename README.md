@@ -27,7 +27,9 @@ end
 Or give it a normal Enumerator that already exists:
 ```ruby
 enum = Enumerator.new do |y|
-  # do something
+  1_000.times do |count|
+    y << count
+  end
 end
 
 a_enum = ArrayEnumerator.new(enum)
