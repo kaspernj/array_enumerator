@@ -192,6 +192,8 @@ class ArrayEnumerator
     end
   end
 
+  alias map collect
+
   # Returns a normal array with all elements. Can also raise corrupted error if elements have been thrown out.
   def to_a
     check_corrupted

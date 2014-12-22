@@ -140,13 +140,29 @@ describe "ArrayEnumerator" do
     result.should eq [5]
   end
 
-  it "#collect" do
-    collected_a_enum = a_enum_10.collect { |element| element + 1000 }
+  describe "#collect" do
+    it "should return a new enumerator yielding the new values one by one" do
+      collected_a_enum = a_enum_10.collect { |element| element + 1000 }
 
-    count = 0
-    collected_a_enum.each do |number|
-      number.should eq (count + 1000)
-      count += 1
+      count = 0
+      collected_a_enum.each do |number|
+        number.should eq (count + 1000)
+        count += 1
+      end
+
+      count.should eq 10
+    end
+
+    it "should work with map and block-symbols" do
+      collected_a_enum = a_enum_10.map(&:to_f)
+
+      count = 0
+      collected_a_enum.each do |number|
+        number.should eq count.to_f
+        count += 1
+      end
+
+      count.should eq 10
     end
   end
 end
