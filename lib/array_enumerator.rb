@@ -182,6 +182,18 @@ class ArrayEnumerator
     return res
   end
 
+  def collect
+    check_corrupted
+
+    return ArrayEnumerator.new do |y|
+      self.each do |element|
+        y << yield(element)
+      end
+    end
+  end
+
+  alias map collect
+
   # Returns a normal array with all elements. Can also raise corrupted error if elements have been thrown out.
   def to_a
     check_corrupted

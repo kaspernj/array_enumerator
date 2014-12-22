@@ -46,6 +46,16 @@ a_enum.length #=> 3
 results_array = a_enum.select { |element| element.something? }
 ```
 
+### Collect
+
+Prints out 100, 101 102 etc.
+```ruby
+collected_a_enum = a_enum.collect { |count| count + 100 }
+collected_a_enum.each do |count|
+  print "#{count} "
+end
+```
+
 ## Contributing to ArrayEnumerator
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
