@@ -130,14 +130,18 @@ describe "ArrayEnumerator" do
   end
 
   it "#select" do
-    enum = ArrayEnumerator.new do |y|
-      10.times do |count|
-        y << count
-      end
-    end
+    result = a_enum_10.select { |element| element == 5 || element == 7 }.to_a
+    result.should eq [5, 7]
+  end
 
-    result = enum.select { |element| element == 5}
-    result.should eq [5]
+  it "#reject" do
+    result = a_enum_10.reject { |element| element == 5 || element == 7}.to_a
+    result.should eq [0, 1, 2, 3, 4, 6, 8, 9]
+  end
+
+  it "#compact" do
+    a_enum = ArrayEnumerator.new([0, nil, 1, 2, 3, 4, nil, 5].to_enum)
+    a_enum.compact.to_a.should eq [0, 1, 2, 3, 4, 5]
   end
 
   describe "#collect" do

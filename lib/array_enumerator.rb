@@ -126,14 +126,24 @@ class ArrayEnumerator
   end
 
   def select
-    result = []
-
-    check_corrupted
-    self.each do |element|
-      result << element if yield(element)
+    return ArrayEnumerator.new do |y|
+      check_corrupted
+      self.each do |element|
+        y << element if yield(element)
+      end
     end
+  end
 
-    return result
+  alias keep_if select
+
+  def reject
+    select { |element| !yield(element) }
+  end
+
+  alias delete_if reject
+
+  def compact
+    reject { |element| element == nil }
   end
 
   # Giving slice negaive arguments will force it to cache all elements and crush the memory for big results.
@@ -152,7 +162,7 @@ class ArrayEnumerator
       raise "Dont now what to do with args: '#{args}'."
     end
 
-    @eles = [] if !@eles
+    @eles ||= []
     cache_eles = need_eles - @eles.length if need_eles
     cache_ele(cache_eles) if need_eles && cache_eles > 0
     return @eles.slice(*args)
@@ -168,7 +178,7 @@ class ArrayEnumerator
       amount = 1
     end
 
-    @eles = [] unless @eles
+    @eles ||= []
     cache_ele(amount - @eles.length) if !@eles || @eles.length < amount
     res = @eles.shift(*args)
 
@@ -203,6 +213,12 @@ class ArrayEnumerator
 
   alias to_ary to_a
 
+  def to_s
+    "<ArrayEnumerator array_corrupted=\"#{@array_corrupted}\" length_cache=\"#{@length_cache}\">"
+  end
+
+  alias inspect to_s
+
 private
 
   # Raises error because elements have been forgotten to spare memory.
@@ -216,10 +232,13 @@ private
 
     begin
       @mutex.synchronize do
-        while ele = @enum.next
+        loop do
+          ele = @enum.next
           @length_cache += 1
           yield(ele)
         end
+
+        @end = true # How it actually breaks is beyond me...
       end
     rescue StopIteration
       @end = true
@@ -228,7 +247,7 @@ private
 
   # Caches a given amount of elements.
   def cache_ele(amount = 1)
-    @eles = [] if !@cache
+    @eles ||= []
 
     begin
       @mutex.synchronize do
@@ -244,7 +263,7 @@ private
 
   # Forces the rest of the elements to be cached.
   def cache_all
-    @eles = [] if !@eles
+    @eles ||= []
 
     begin
       @mutex.synchronize do
