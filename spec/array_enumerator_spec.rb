@@ -51,6 +51,8 @@ describe "ArrayEnumerator" do
       ae = ArrayEnumerator.new(cont)
 
       ae.empty?.should eq false
+      ae.none?.should eq false
+      ae.any?.should eq true
 
       count = 0
       ae.each do |ele|
@@ -72,6 +74,8 @@ describe "ArrayEnumerator" do
       cont = %w[a b c].to_enum
       ae = ArrayEnumerator.new(cont)
       ae.empty?.should eq false
+      ae.none?.should eq false
+      ae.any?.should eq true
       ae.first.should eq "a"
     end
   end
