@@ -48,6 +48,10 @@ class ArrayEnumerator
     return @empty
   end
 
+  def any?
+    !empty?
+  end
+
   # Returns each element and releases them from cache.
   def each(&block)
     if block
