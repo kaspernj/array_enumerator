@@ -48,6 +48,10 @@ class ArrayEnumerator
     return @empty
   end
 
+  def none?
+    empty?
+  end
+
   def any?
     !empty?
   end
