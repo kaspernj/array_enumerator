@@ -132,13 +132,15 @@ describe "ArrayEnumerator" do
   end
 
   it "#select" do
-    result = a_enum_10.select { |element| element == 5 || element == 7 }.to_a
-    expect(result).to eq [5, 7]
+    result = a_enum_10.select { |element| element == 5 || element == 7 }
+    expect(result.class).to eq ArrayEnumerator
+    expect(result.to_a).to eq [5, 7]
   end
 
   it "#reject" do
-    result = a_enum_10.reject { |element| element == 5 || element == 7}.to_a
-    expect(result).to eq [0, 1, 2, 3, 4, 6, 8, 9]
+    result = a_enum_10.reject { |element| element == 5 || element == 7}
+    expect(result.class).to eq ArrayEnumerator
+    expect(result.to_a).to eq [0, 1, 2, 3, 4, 6, 8, 9]
   end
 
   it "#compact" do
@@ -149,6 +151,7 @@ describe "ArrayEnumerator" do
   describe "#collect" do
     it "should return a new enumerator yielding the new values one by one" do
       collected_a_enum = a_enum_10.collect { |element| element + 1000 }
+      expect(collected_a_enum.class).to eq ArrayEnumerator
 
       count = 0
       collected_a_enum.each do |number|
@@ -170,5 +173,58 @@ describe "ArrayEnumerator" do
 
       expect(count).to eq 10
     end
+  end
+
+  describe '#push' do
+    it 'adds extra objects' do
+      a_enum_10.push 10
+
+      count = 0
+      a_enum_10.each do |number|
+        expect(count).to eq number
+        count += 1
+      end
+
+      expect(count).to eq 11
+    end
+
+    it 'doesnt allow push after end has been reached' do
+      a_enum_10.each do
+        # do nothing
+      end
+
+      expect { a_enum_10 << 10 }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+    end
+  end
+
+  describe '#unshift' do
+    it 'prepends objects' do
+      a_enum_10.unshift -1
+
+      count = -1
+      a_enum_10.each do |number|
+        expect(count).to eq number
+        count += 1
+      end
+
+      expect(count).to eq 10
+    end
+
+    it 'doesnt allow unshift after starting iteration' do
+      a_enum_10.each { }
+      expect { a_enum_10.unshift -1 }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+    end
+  end
+
+  it '#max' do
+    expect(a_enum_10.max).to eq 9
+  end
+
+  it '#min' do
+    expect(a_enum_10.min).to eq 0
+  end
+
+  it '#minmax' do
+    expect(a_enum_10.minmax).to eq [0, 9]
   end
 end

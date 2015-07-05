@@ -46,6 +46,10 @@ a_enum[2] #=> 3
 a_enum.each_index { |count| puts "Count: #{count}" }
 a_enum.length #=> 3
 a_enum.select { |element| element.to_f }.to_a #=> [0.0, 1.0, 2.0 etc]
+a_enum << 1001 # push also works
+a_enum.unshift -1
+a_enum.min #=> 0
+a_enum.max #=> 999
 ```
 
 ### Collect

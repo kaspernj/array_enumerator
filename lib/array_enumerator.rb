@@ -3,6 +3,8 @@ class ArrayEnumerator
   class ArrayCorruptedError < RuntimeError; end
   class CannotCallBeforeEnd < RuntimeError; end
 
+  include Enumerable
+
   # Takes an enumerator to work with as argument.
   def initialize(enum = nil, &blk)
     if enum
@@ -16,6 +18,9 @@ class ArrayEnumerator
       raise "No enum or block was given."
     end
 
+    @eles = []
+    @end_eles = []
+
     # Used to calculate length without depending corruption.
     @length_cache = 0
 
@@ -26,17 +31,31 @@ class ArrayEnumerator
     @mutex = Mutex.new
   end
 
+  def push(object)
+    raise ArrayCorruptedError if @end
+    @end_eles << object
+  end
+
+  def <<(object)
+    push(object)
+  end
+
+  def unshift(object)
+    check_corrupted
+    @eles << object
+  end
+
   # Cache the first elements (if not cached already) and returns it.
   def first
     check_corrupted
-    cache_ele if !@eles || @eles.empty?
+    cache_ele if @eles.empty?
     return @eles.first
   end
 
-  # Returns true if the array is empty.
+  # Returns true if the array-enumerator is empty.
   def empty?
     if @empty == nil
-      cache_ele if !@eles
+      cache_ele if @length_cache == 0
 
       if @length_cache > 0
         @empty = false
@@ -109,19 +128,21 @@ class ArrayEnumerator
     end
   end
 
-  # Returns a enumerator that can yield the all the lements (both cached and future un-cached ones).
+  # Returns a enumerator that can yield all the elements (both cached and future un-cached ones).
   def to_enum
     check_corrupted
     @array_corrupted = true
 
     return Enumerator.new do |yielder|
-      if @eles
-        while ele = @eles.shift
-          yielder << ele
-        end
+      while ele = @eles.shift
+        yielder << ele
       end
 
       yield_rest do |ele|
+        yielder << ele
+      end
+
+      while ele = @end_eles.shift
         yielder << ele
       end
     end
@@ -136,7 +157,7 @@ class ArrayEnumerator
   def select
     return ArrayEnumerator.new do |y|
       check_corrupted
-      self.each do |element|
+      each do |element|
         y << element if yield(element)
       end
     end
@@ -187,7 +208,7 @@ class ArrayEnumerator
     end
 
     @eles ||= []
-    cache_ele(amount - @eles.length) if !@eles || @eles.length < amount
+    cache_ele(amount - @eles.length) if @eles.length < amount
     res = @eles.shift(*args)
 
     # Since we are removing an element, the length should go down with the amount of elements captured.
@@ -204,7 +225,7 @@ class ArrayEnumerator
     check_corrupted
 
     return ArrayEnumerator.new do |y|
-      self.each do |element|
+      each do |element|
         y << yield(element)
       end
     end
@@ -255,8 +276,6 @@ private
 
   # Caches a given amount of elements.
   def cache_ele(amount = 1)
-    @eles ||= []
-
     begin
       @mutex.synchronize do
         while @eles.length <= amount
@@ -271,8 +290,6 @@ private
 
   # Forces the rest of the elements to be cached.
   def cache_all
-    @eles ||= []
-
     begin
       @mutex.synchronize do
         while ele = @enum.next
