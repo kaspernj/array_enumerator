@@ -38,6 +38,8 @@ a_enum = ArrayEnumerator.new(enum)
 Call array-methods like you normally would:
 ```ruby
 a_enum.empty? #=> false
+a_enum.none? => false
+a_enum.any? => true
 a_enum.first #=> 1
 a_enum.shift #=> 2
 a_enum[2] #=> 3
