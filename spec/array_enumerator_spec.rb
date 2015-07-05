@@ -17,15 +17,15 @@ describe "ArrayEnumerator" do
     end
 
     3.times do |count|
-      enum.shift.should eq count
+      expect(enum.shift).to eq count
     end
   end
 
   it "#shift" do
     cont = %w[a b c d e].to_enum
     ae = ArrayEnumerator.new(cont)
-    ae.shift.should eq "a"
-    ae.to_a.should eq %w[b c d e]
+    expect(ae.shift).to eq "a"
+    expect(ae.to_a).to eq %w[b c d e]
   end
 
   describe "#each" do
@@ -36,11 +36,11 @@ describe "ArrayEnumerator" do
 
       count = 0
       ae.each do |ele|
-        ele.should eq arr[count]
+        expect(ele).to eq arr[count]
         count += 1
       end
 
-      count.should eq 3
+      expect(count).to eq 3
     end
   end
 
@@ -50,33 +50,31 @@ describe "ArrayEnumerator" do
       cont = arr.to_enum
       ae = ArrayEnumerator.new(cont)
 
-      ae.empty?.should eq false
-      ae.none?.should eq false
-      ae.any?.should eq true
+      expect(ae.empty?).to eq false
+      expect(ae.none?).to eq false
+      expect(ae.any?).to eq true
 
       count = 0
       ae.each do |ele|
-        ele.should eq arr[count]
+        expect(ele).to eq arr[count]
         count += 1
       end
 
-      count.should eq 3
+      expect(count).to eq 3
 
       expect { ae.to_a }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
       expect { ae.first }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
 
-      expect {
-        ae.each { |ele| raise "Should never get here?" }
-      }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
+      expect { ae.each { |ele| raise "Should never get here?" } }.to raise_error(ArrayEnumerator::ArrayCorruptedError)
     end
 
     it "still be able to get the first element after testing if empty" do
       cont = %w[a b c].to_enum
       ae = ArrayEnumerator.new(cont)
-      ae.empty?.should eq false
-      ae.none?.should eq false
-      ae.any?.should eq true
-      ae.first.should eq "a"
+      expect(ae.empty?).to eq false
+      expect(ae.none?).to eq false
+      expect(ae.any?).to eq true
+      expect(ae.first).to eq "a"
     end
   end
 
@@ -90,7 +88,7 @@ describe "ArrayEnumerator" do
       # ignore.
     end
 
-    ae.length.should eq 5
+    expect(ae.length).to eq 5
   end
 
   it "#slice" do
@@ -110,14 +108,14 @@ describe "ArrayEnumerator" do
     ]
 
     runs.each do |args|
-      arr.slice(*args).should eq ae.slice(*args)
+      expect(arr.slice(*args)).to eq ae.slice(*args)
     end
 
     fails.each do |args|
       expect {
         res2 = ae.slice(*args)
         raise "Should have failed but didnt."
-      }.to raise_error
+      }.to raise_error(ArgumentError)
     end
   end
 
@@ -127,25 +125,25 @@ describe "ArrayEnumerator" do
 
     expect = 0
     ae.each_index do |num|
-      num.should eq expect
-      ae[num].should eq arr[num]
+      expect(num).to eq expect
+      expect(ae[num]).to eq arr[num]
       expect += 1
     end
   end
 
   it "#select" do
     result = a_enum_10.select { |element| element == 5 || element == 7 }.to_a
-    result.should eq [5, 7]
+    expect(result).to eq [5, 7]
   end
 
   it "#reject" do
     result = a_enum_10.reject { |element| element == 5 || element == 7}.to_a
-    result.should eq [0, 1, 2, 3, 4, 6, 8, 9]
+    expect(result).to eq [0, 1, 2, 3, 4, 6, 8, 9]
   end
 
   it "#compact" do
     a_enum = ArrayEnumerator.new([0, nil, 1, 2, 3, 4, nil, 5].to_enum)
-    a_enum.compact.to_a.should eq [0, 1, 2, 3, 4, 5]
+    expect(a_enum.compact.to_a).to eq [0, 1, 2, 3, 4, 5]
   end
 
   describe "#collect" do
@@ -154,11 +152,11 @@ describe "ArrayEnumerator" do
 
       count = 0
       collected_a_enum.each do |number|
-        number.should eq (count + 1000)
+        expect(number).to eq (count + 1000)
         count += 1
       end
 
-      count.should eq 10
+      expect(count).to eq 10
     end
 
     it "should work with map and block-symbols" do
@@ -166,11 +164,11 @@ describe "ArrayEnumerator" do
 
       count = 0
       collected_a_enum.each do |number|
-        number.should eq count.to_f
+        expect(number).to eq count.to_f
         count += 1
       end
 
-      count.should eq 10
+      expect(count).to eq 10
     end
   end
 end

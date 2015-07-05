@@ -165,9 +165,9 @@ class ArrayEnumerator
     elsif args[0] && args[1] && args[0] > 0 && args[1] > 0
       need_eles = args[0] + args[1]
     elsif args[0] < 0 || args[1] < 0
-      raise "Slice cant take negative arguments."
+      raise ArgumentError, "Slice cant take negative arguments."
     else
-      raise "Dont now what to do with args: '#{args}'."
+      raise ArgumentError, "Dont now what to do with args: '#{args}'."
     end
 
     @eles ||= []
